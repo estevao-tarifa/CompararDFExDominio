@@ -1,0 +1,6 @@
+arquivos_convertidos/
+relatorio_dominio_x_dfe.xlsx
+_validacao_*.xlsx
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
