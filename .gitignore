@@ -1,6 +1,7 @@
 arquivos_convertidos/
 relatorio_dominio_x_dfe.xlsx
 relatorio_dominio_x_dfe.pdf
+demo_*.pdf
 _validacao_*.xlsx
 _validacao_*.pdf
 *.pyc

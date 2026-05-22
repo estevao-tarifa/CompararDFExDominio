@@ -9,12 +9,14 @@ O notebook pede os dois arquivos separadamente e gera um **PDF interativo** cham
 
 ## O que o PDF entrega
 
-- primeira pagina com empresa em destaque, periodo das Entradas, periodo da DFE, quantidade de notas faltantes e soma do valor faltante;
+- primeira pagina em estilo dashboard com empresa em destaque, periodo das Entradas, periodo da DFE, quantidade de notas faltantes, soma do valor faltante, canceladas SAT/DFE e notas marcadas como Entrada;
 - resumo da conferencia;
 - sumario clicavel e marcadores do PDF;
 - criterios usados no cruzamento;
 - campo interativo com todas as chaves faltantes para selecionar e copiar;
 - tabela de NF-es da DFE que faltam nas Entradas;
+- secao propria para notas canceladas no SAT/DFE;
+- secao propria para notas marcadas como `E`/Entrada na DFE/SAT;
 - tabela de diferencas de valor ou fornecedor para conferir;
 - base DFE com status;
 - base de Entradas normalizada;
