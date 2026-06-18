@@ -1,51 +1,144 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#176ac6"><title>Conferência DFE × Domínio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176AC6">
+  <title>Conferência DFE × Domínio | Asseconsul+</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<main class="shell">
-  <header class="topbar"><a class="brand" href="/"><span class="brand-mark">D</span><span>DFE <i>×</i> Domínio</span></a><span class="internal-badge">Ferramenta interna</span></header>
-  <div id="upload-view">
-    <section class="hero">
-      <div class="eyebrow"><span></span> Conferência fiscal simplificada</div>
-      <h1>Compare suas notas em <em>poucos segundos.</em></h1>
-      <p>Envie o relatório do Domínio e a planilha DFE. A ferramenta identifica Entradas ou Saídas e entrega as divergências em um relatório pronto para uso.</p>
-    </section>
-    <section class="upload-card">
-      <div class="alert" id="error-box" role="alert" hidden></div>
-      <form id="compare-form">
-        <div class="upload-grid">
-          <label class="dropzone" for="dominio"><span class="step">01</span><span class="file-icon">↥</span><strong>Relatório do Domínio</strong><small>Entradas ou Saídas</small><span class="file-types">PDF, XLS ou XLSX</span><span class="selected-file" data-for="dominio">Selecionar arquivo</span><input id="dominio" name="dominio" type="file" accept=".pdf,.xls,.xlsx" required></label>
-          <div class="connector"><span>+</span></div>
-          <label class="dropzone" for="dfe"><span class="step">02</span><span class="file-icon">↥</span><strong>Planilha DFE / SAT</strong><small>Exportação das NF-e</small><span class="file-types">XLSX</span><span class="selected-file" data-for="dfe">Selecionar arquivo</span><input id="dfe" name="dfe" type="file" accept=".xlsx" required></label>
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Asseconsul+">
+        <img src="/assets/logo-cor.svg" alt="Asseconsul+">
+      </a>
+      <div class="product-name">
+        <strong>Conferência DFE × Domínio</strong>
+        <span>Ferramenta de conferência fiscal</span>
+      </div>
+      <span class="environment">Uso interno</span>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section id="upload-view">
+      <div class="page-heading">
+        <div>
+          <span class="section-label">Nova conferência</span>
+          <h1>Comparar relatórios fiscais</h1>
+          <p>Selecione os dois arquivos. O tipo de movimento é identificado automaticamente.</p>
         </div>
-        <div class="form-footer"><p><span>✓</span> Os arquivos são usados somente durante a conferência.</p><button type="submit" class="primary-button"><span class="button-label">Iniciar conferência</span><span class="button-loading">Conferindo arquivos…</span><b>→</b></button></div>
-      </form>
+      </div>
+
+      <section class="panel upload-panel">
+        <div class="panel-header">
+          <div><strong>Arquivos da conferência</strong><span>Limite total de 40 MB</span></div>
+          <span class="privacy-note">Processamento temporário</span>
+        </div>
+        <div class="alert" id="error-box" role="alert" hidden></div>
+        <form id="compare-form">
+          <div class="upload-grid">
+            <label class="dropzone" for="dominio">
+              <span class="file-number">1</span>
+              <span class="file-symbol">DOM</span>
+              <div><strong>Relatório do Domínio</strong><small>Entradas ou Saídas</small></div>
+              <span class="selected-file" data-for="dominio">Selecionar PDF, XLS ou XLSX</span>
+              <input id="dominio" name="dominio" type="file" accept=".pdf,.xls,.xlsx" required>
+            </label>
+            <label class="dropzone" for="dfe">
+              <span class="file-number">2</span>
+              <span class="file-symbol">DFE</span>
+              <div><strong>Planilha DFE / SAT</strong><small>Exportação das NF-e</small></div>
+              <span class="selected-file" data-for="dfe">Selecionar arquivo XLSX</span>
+              <input id="dfe" name="dfe" type="file" accept=".xlsx" required>
+            </label>
+          </div>
+          <div class="form-footer">
+            <p>Os arquivos não são armazenados permanentemente.</p>
+            <button type="submit" class="button primary">
+              <span class="button-label">Executar conferência</span>
+              <span class="button-loading">Processando…</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="instruction-grid">
+        <article><b>01</b><div><strong>Envie os arquivos</strong><p>Relatório contábil e planilha estadual.</p></div></article>
+        <article><b>02</b><div><strong>Revise o painel</strong><p>Consulte status, valores e documentos.</p></div></article>
+        <article><b>03</b><div><strong>Exporte ou imprima</strong><p>Use o PDF completo ou a visão do painel.</p></div></article>
+      </section>
     </section>
-    <section class="features">
-      <article><span>01</span><div><strong>Detecção automática</strong><p>Reconhece se o relatório é de Entradas ou Saídas.</p></div></article>
-      <article><span>02</span><div><strong>Cruzamento inteligente</strong><p>Compara número, série, valor e emitente ou destinatário.</p></div></article>
-      <article><span>03</span><div><strong>Relatório completo</strong><p>PDF com faltantes, canceladas, diferenças e chaves.</p></div></article>
+
+    <section id="result-view" hidden>
+      <div class="report-header">
+        <div>
+          <span class="section-label" id="result-movement">Conferência concluída</span>
+          <h1 id="result-company">Empresa</h1>
+          <p id="result-periods"></p>
+          <small>Gerado em <span id="generated-at"></span></small>
+        </div>
+        <div class="report-actions">
+          <button class="button secondary" id="new-comparison" type="button">Nova conferência</button>
+          <button class="button secondary" id="print-report" type="button">Imprimir painel</button>
+          <a class="button primary" id="download-link" href="#">Baixar PDF</a>
+        </div>
+      </div>
+
+      <section class="metric-grid">
+        <article class="metric"><span>Registros no Domínio</span><strong id="metric-dominio">0</strong></article>
+        <article class="metric"><span>Documentos DFE</span><strong id="metric-total">0</strong></article>
+        <article class="metric critical"><span>Notas faltantes</span><strong id="metric-missing">0</strong><small id="metric-missing-value">R$ 0,00</small></article>
+        <article class="metric attention"><span>Diferenças</span><strong id="metric-differences">0</strong></article>
+        <article class="metric positive"><span>Notas conferidas</span><strong id="metric-ok">0</strong><small id="metric-compliance">0%</small></article>
+      </section>
+
+      <section class="value-summary">
+        <div><span>Chaves válidas para baixar</span><strong id="valid-keys">0</strong></div>
+        <div><span>Valor das chaves válidas</span><strong id="valid-value">R$ 0,00</strong></div>
+        <div><span>Notas canceladas</span><strong id="cancelled-count">0</strong></div>
+      </section>
+
+      <section class="panel report-panel">
+        <div class="table-toolbar">
+          <div>
+            <strong>Documentos da conferência</strong>
+            <span id="visible-count">0 registros</span>
+          </div>
+          <label class="search-field">
+            <span>Buscar</span>
+            <input id="table-search" type="search" placeholder="Nota, chave, parte ou status">
+          </label>
+        </div>
+        <div class="filter-tabs" role="tablist">
+          <button class="active" data-filter="all" type="button">Todos <b id="count-all">0</b></button>
+          <button data-filter="missing" type="button">Faltantes <b id="count-missing">0</b></button>
+          <button data-filter="difference" type="button">Diferenças <b id="count-difference">0</b></button>
+          <button data-filter="cancelled" type="button">Canceladas <b id="count-cancelled">0</b></button>
+          <button data-filter="ok" type="button">OK <b id="count-ok">0</b></button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th><th>Nota</th><th>Série</th><th>Emissão</th>
+                <th>Valor DFE</th><th>Valor Domínio</th><th>Diferença</th>
+                <th>Situação</th><th>Parte DFE</th><th>Parte Domínio</th><th>Chave de acesso</th>
+              </tr>
+            </thead>
+            <tbody id="report-rows"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="empty-state" hidden>Nenhum documento encontrado para este filtro.</div>
+      </section>
     </section>
-  </div>
-  <div id="result-view" hidden>
-    <section class="result-heading"><div class="success-icon">✓</div><div><div class="eyebrow"><span></span><b id="result-movement"></b></div><h1>Conferência <em>finalizada.</em></h1><p><strong id="result-company"></strong> · <span id="result-periods"></span></p></div></section>
-    <section class="result-grid">
-      <article class="metric accent"><small>Total DFE</small><strong id="metric-total">0</strong><span>documentos analisados</span></article>
-      <article class="metric danger"><small>Notas faltantes</small><strong id="metric-missing">0</strong><span id="metric-missing-value">R$ 0,00</span></article>
-      <article class="metric warning"><small>Diferenças</small><strong id="metric-differences">0</strong><span>para conferir</span></article>
-      <article class="metric success"><small>Notas OK</small><strong id="metric-ok">0</strong><span id="metric-compliance">0% de conformidade</span></article>
-    </section>
-    <section class="download-card"><div><span class="pdf-icon">PDF</span><div><strong>Relatório completo da conferência</strong><p id="download-detail"></p></div></div><a class="primary-button" id="download-link" href="#">Baixar relatório <b>↓</b></a></section>
-    <section class="result-note"><strong>Valor das chaves válidas para baixar</strong><span id="valid-value"></span></section>
-    <div class="result-actions"><button id="new-comparison" type="button">← Fazer nova conferência</button></div>
-  </div>
-  <footer>Comparar DFE × Domínio <span>•</span> Uso interno</footer>
-</main>
-<script type="module" src="/app.js"></script>
-</body></html>
+  </main>
+
+  <footer class="app-footer">
+    <div><img src="/assets/logo-branca.svg" alt="Asseconsul+"><span>Conferência DFE × Domínio</span></div>
+    <span>Aplicação interna</span>
+  </footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

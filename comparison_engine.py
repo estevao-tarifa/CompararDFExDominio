@@ -45,6 +45,15 @@ def _money(value):
     return f"R$ {float(value):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def _date(value):
+    parsed = pd.to_datetime(value, errors="coerce")
+    return "" if pd.isna(parsed) else parsed.strftime("%d/%m/%Y")
+
+
+def _text(value):
+    return "" if pd.isna(value) else str(value)
+
+
 def compare_files(dominio_path: Path, dfe_path: Path, output_path: Path) -> dict:
     with contextlib.redirect_stdout(io.StringIO()):
         movimento, _ = carregar_movimento_dominio(str(dominio_path), "auto")
@@ -65,6 +74,54 @@ def compare_files(dominio_path: Path, dfe_path: Path, output_path: Path) -> dict
         ("DIFERENCA", "CONFERIR"), na=False
     )
     validas = faltantes & ~canceladas
+    col_chave = achar_coluna(resultado, ["ChaveAcesso", "chave acesso"], obrigatoria=False)
+    col_data = achar_coluna(resultado, ["DataEmissao", "data emissao"], obrigatoria=False)
+    col_situacao = achar_coluna(resultado, ["Situacao"], obrigatoria=False)
+    col_tipo = achar_coluna(
+        resultado,
+        ["TipoDeOperacaoEntradaOuSaida", "tipo operacao entrada saida"],
+        obrigatoria=False,
+    )
+    col_parte = achar_coluna(
+        resultado,
+        ["NomeDestinatario", "nome destinatario"]
+        if tipo == "saida"
+        else ["NomeEmitente", "nome emitente"],
+        obrigatoria=False,
+    )
+    documents = []
+    for index, row in resultado.iterrows():
+        documents.append(
+            {
+                "id": index + 1,
+                "status": _text(row.get("StatusConferencia")),
+                "chave": _text(row.get(col_chave)) if col_chave else _text(row.get("_dfe_chave")),
+                "numero": _text(row.get("_dfe_numero")),
+                "serie": _text(row.get("_dfe_serie")),
+                "emissao": _date(row.get(col_data)) if col_data else "",
+                "valor_dfe": _money(row.get("_dfe_valor", 0)),
+                "valor_dominio": (
+                    _money(row.get("ValorDominio"))
+                    if pd.notna(row.get("ValorDominio"))
+                    else "-"
+                ),
+                "diferenca": (
+                    _money(row.get("DiferencaDfeMenosDominio"))
+                    if pd.notna(row.get("DiferencaDfeMenosDominio"))
+                    else "-"
+                ),
+                "similaridade": (
+                    f"{float(row.get('SimilaridadeFornecedor')) * 100:.0f}%"
+                    if pd.notna(row.get("SimilaridadeFornecedor"))
+                    else "-"
+                ),
+                "situacao": _text(row.get(col_situacao)) if col_situacao else "",
+                "operacao": _text(row.get(col_tipo)) if col_tipo else "",
+                "parte_dfe": _text(row.get(col_parte)) if col_parte else "",
+                "parte_dominio": _text(row.get("FornecedorDominio")),
+                "cancelada": bool(row.get("_dfe_cancelada", False)),
+            }
+        )
 
     return {
         "tipo": tipo,
@@ -87,4 +144,6 @@ def compare_files(dominio_path: Path, dfe_path: Path, output_path: Path) -> dict
             100 * resultado["StatusConferencia"].eq("OK").sum() / max(len(resultado), 1),
             1,
         ),
+        "gerado_em": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "documents": documents,
     }

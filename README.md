@@ -2,6 +2,16 @@
 
 Aplicacao web interna, sem login, para comparar relatorios de Entradas ou Saidas do sistema Dominio com a planilha DFE/SAT SC.
 
+## Recursos da interface
+
+- identidade visual institucional Asseconsul+;
+- painel com indicadores e todos os documentos da conferencia;
+- filtros para faltantes, diferencas, canceladas e notas OK;
+- busca por nota, chave, parte ou status;
+- impressao do painel diretamente pelo navegador;
+- download do relatorio completo em PDF;
+- layout responsivo para computador, tablet e celular.
+
 ## Stack
 
 - TypeScript + Fastify no servidor web;
