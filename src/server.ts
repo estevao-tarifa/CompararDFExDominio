@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import multipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import { createWriteStream } from "node:fs";
-import { access, mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -10,11 +10,15 @@ import { extname, join, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 
 type Summary = Record<string, string | number>;
+type MemoryJob = { pdf: Buffer; expiresAt: number };
 const app = Fastify({ logger: true, bodyLimit: 40 * 1024 * 1024 });
 const root = resolve(process.cwd());
 const workRoot = join(tmpdir(), "comparar-dfe-dominio");
 const python = process.env.PYTHON_BIN || (process.platform === "win32" ? "python" : "python3");
+const memoryJobs = new Map<string, MemoryJob>();
+const JOB_TTL_MS = 30 * 60 * 1000;
 
+await rm(workRoot, { recursive: true, force: true });
 await mkdir(workRoot, { recursive: true });
 await app.register(multipart, { limits: { files: 2, fileSize: 40 * 1024 * 1024 } });
 await app.register(fastifyStatic, { root: join(root, "public") });
@@ -39,6 +43,13 @@ function runComparison(dominio: string, dfe: string, output: string): Promise<Su
 }
 
 app.get("/health", async () => ({ status: "ok" }));
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [jobId, job] of memoryJobs) {
+    if (job.expiresAt <= now) memoryJobs.delete(jobId);
+  }
+}, 60_000).unref();
 
 app.post("/api/compare", async (request, reply) => {
   const jobId = randomUUID().replaceAll("-", "");
@@ -66,8 +77,12 @@ app.post("/api/compare", async (request, reply) => {
     }
     const outputPath = join(jobDir, "conferencia-dominio-dfe.pdf");
     const summary = await runComparison(dominioPath, dfePath, outputPath);
+    const pdf = await readFile(outputPath);
+    memoryJobs.set(jobId, { pdf, expiresAt: Date.now() + JOB_TTL_MS });
+    await rm(jobDir, { recursive: true, force: true });
     return { jobId, summary };
   } catch (error) {
+    await rm(jobDir, { recursive: true, force: true });
     request.log.error(error);
     return reply.code(422).send({ message: error instanceof Error ? error.message : "Não foi possível concluir a conferência." });
   }
@@ -76,16 +91,18 @@ app.post("/api/compare", async (request, reply) => {
 app.get<{ Params: { jobId: string } }>("/api/download/:jobId", async (request, reply) => {
   const { jobId } = request.params;
   if (!/^[a-f0-9]{32}$/.test(jobId)) return reply.code(404).send();
-  const file = join(workRoot, jobId, "conferencia-dominio-dfe.pdf");
-  try {
-    await access(file);
-    return reply
-      .header("Content-Type", "application/pdf")
-      .header("Content-Disposition", 'attachment; filename="conferencia-dominio-dfe.pdf"')
-      .send(await readFile(file));
-  } catch {
-    return reply.code(404).send({ message: "Relatório não encontrado." });
-  }
+  const job = memoryJobs.get(jobId);
+  if (!job) return reply.code(404).send({ message: "Relatório não encontrado ou já removido." });
+  memoryJobs.delete(jobId);
+  return reply
+    .header("Content-Type", "application/pdf")
+    .header("Content-Disposition", 'attachment; filename="conferencia-dominio-dfe.pdf"')
+    .send(job.pdf);
+});
+
+app.delete<{ Params: { jobId: string } }>("/api/job/:jobId", async (request, reply) => {
+  memoryJobs.delete(request.params.jobId);
+  return reply.code(204).send();
 });
 
 app.setNotFoundHandler((_request, reply) => reply.sendFile("index.html"));

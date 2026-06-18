@@ -30,6 +30,7 @@ type Summary = {
   chaves_para_baixar: number;
   valor_faltante: string;
   valor_para_baixar: string;
+  chaves_faltantes: string[];
   conformidade: number;
   gerado_em: string;
   documents: DocumentRow[];
@@ -43,6 +44,7 @@ const setText = (id: string, value: string | number) => {
 
 let documents: DocumentRow[] = [];
 let activeFilter = "all";
+let activeJobId = "";
 
 document.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
   input.addEventListener("change", () => {
@@ -101,6 +103,7 @@ function renderRows() {
 }
 
 function showResult(summary: Summary, jobId: string) {
+  activeJobId = jobId;
   documents = summary.documents;
   setText("result-movement", `${summary.movimento} · conferência concluída`);
   setText("result-company", summary.empresa);
@@ -116,6 +119,8 @@ function showResult(summary: Summary, jobId: string) {
   setText("valid-keys", summary.chaves_para_baixar);
   setText("valid-value", summary.valor_para_baixar);
   setText("cancelled-count", summary.canceladas);
+  const keysField = $("#missing-keys") as HTMLTextAreaElement | null;
+  if (keysField) keysField.value = summary.chaves_faltantes.join("\n");
   setText("count-all", summary.documents.length);
   setText("count-missing", summary.documents.filter((row) => statusGroup(row) === "missing").length);
   setText("count-difference", summary.documents.filter((row) => statusGroup(row) === "difference").length);
@@ -161,4 +166,31 @@ document.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((button) =
 
 $("#table-search")?.addEventListener("input", renderRows);
 $("#print-report")?.addEventListener("click", () => window.print());
-$("#new-comparison")?.addEventListener("click", () => window.location.reload());
+$("#copy-keys")?.addEventListener("click", async () => {
+  const field = $("#missing-keys") as HTMLTextAreaElement | null;
+  if (!field) return;
+  try {
+    await navigator.clipboard.writeText(field.value);
+  } catch {
+    field.select();
+    document.execCommand("copy");
+  }
+  const feedback = $("#copy-feedback");
+  feedback?.removeAttribute("hidden");
+  window.setTimeout(() => feedback?.setAttribute("hidden", ""), 2500);
+});
+
+function discardJob() {
+  if (!activeJobId) return;
+  fetch(`/api/job/${activeJobId}`, { method: "DELETE", keepalive: true }).catch(() => {});
+  activeJobId = "";
+}
+
+$("#download-link")?.addEventListener("click", () => {
+  window.setTimeout(() => { activeJobId = ""; }, 1000);
+});
+$("#new-comparison")?.addEventListener("click", () => {
+  discardJob();
+  window.location.reload();
+});
+window.addEventListener("pagehide", discardJob);

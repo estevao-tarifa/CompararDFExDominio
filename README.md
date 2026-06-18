@@ -8,9 +8,12 @@ Aplicacao web interna, sem login, para comparar relatorios de Entradas ou Saidas
 - painel com indicadores e todos os documentos da conferencia;
 - filtros para faltantes, diferencas, canceladas e notas OK;
 - busca por nota, chave, parte ou status;
+- campo para copiar todas as chaves faltantes válidas;
 - impressao do painel diretamente pelo navegador;
 - download do relatorio completo em PDF;
 - layout responsivo para computador, tablet e celular.
+- arquivos temporarios removidos imediatamente apos o processamento;
+- PDF mantido somente em memoria ate o download ou fechamento da pagina.
 
 ## Stack
 

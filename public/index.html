@@ -100,6 +100,18 @@
         <div><span>Notas canceladas</span><strong id="cancelled-count">0</strong></div>
       </section>
 
+      <section class="panel keys-panel">
+        <div class="keys-heading">
+          <div>
+            <strong>Chaves faltantes para baixar</strong>
+            <span>Notas canceladas não fazem parte desta lista.</span>
+          </div>
+          <button class="button secondary" id="copy-keys" type="button">Copiar chaves</button>
+        </div>
+        <textarea id="missing-keys" readonly aria-label="Chaves faltantes"></textarea>
+        <div class="copy-feedback" id="copy-feedback" hidden>Chaves copiadas para a área de transferência.</div>
+      </section>
+
       <section class="panel report-panel">
         <div class="table-toolbar">
           <div>

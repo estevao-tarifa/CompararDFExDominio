@@ -140,6 +140,11 @@ def compare_files(dominio_path: Path, dfe_path: Path, output_path: Path) -> dict
         "chaves_para_baixar": int(validas.sum()),
         "valor_faltante": _money(resultado.loc[faltantes, "_dfe_valor"].sum()),
         "valor_para_baixar": _money(resultado.loc[validas, "_dfe_valor"].sum()),
+        "chaves_faltantes": [
+            _text(value)
+            for value in resultado.loc[validas, "_dfe_chave"].dropna().tolist()
+            if _text(value).strip()
+        ],
         "conformidade": round(
             100 * resultado["StatusConferencia"].eq("OK").sum() / max(len(resultado), 1),
             1,

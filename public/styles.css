@@ -85,6 +85,15 @@ form.loading .button { opacity: .7; pointer-events: none; }
 .value-summary span { color: #36536b; font-size: 12px; }
 .value-summary strong { font-size: 16px; }
 
+.keys-panel { margin-bottom: 24px; padding: 18px; }
+.keys-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.keys-heading > div { display: flex; flex-direction: column; gap: 4px; }
+.keys-heading strong { font-size: 14px; }
+.keys-heading span { color: var(--muted); font-size: 11px; }
+#missing-keys { width: 100%; height: 118px; margin-top: 14px; padding: 12px; resize: vertical; border: 1px solid var(--line); border-radius: 4px; color: #334452; background: #fafbfc; font: 11px/1.55 Consolas, monospace; outline: 0; }
+#missing-keys:focus { border-color: var(--blue); }
+.copy-feedback { margin-top: 8px; color: var(--success); font-size: 11px; font-weight: 600; }
+
 .report-panel { overflow: hidden; }
 .table-toolbar { min-height: 72px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 1px solid var(--line); }
 .table-toolbar > div { display: flex; flex-direction: column; gap: 4px; }
@@ -137,6 +146,7 @@ tbody tr:hover { background: #f8fbfe; }
   .instruction-grid { grid-template-columns: 1fr; }
   .instruction-grid article + article { border-left: 0; border-top: 1px solid var(--line); }
   .form-footer, .table-toolbar { align-items: stretch; flex-direction: column; }
+  .keys-heading { align-items: stretch; flex-direction: column; }
   .form-footer .button { width: 100%; }
   .search-field { min-width: 100%; }
   .app-footer { align-items: flex-start; flex-direction: column; }
@@ -152,7 +162,7 @@ tbody tr:hover { background: #f8fbfe; }
 @media print {
   @page { size: landscape; margin: 10mm; }
   html, body { background: #fff; }
-  .app-header, .app-footer, #upload-view, .report-actions, .search-field, .filter-tabs, .empty-state { display: none !important; }
+  .app-header, .app-footer, #upload-view, .report-actions, .search-field, .filter-tabs, .empty-state, .keys-panel { display: none !important; }
   .app-main { width: 100%; margin: 0; padding: 0; }
   .report-header { margin-bottom: 12px; }
   .report-header h1 { font-size: 23px; }
