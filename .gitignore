@@ -1,0 +1,17 @@
+# Arquivos de clientes e relatorios gerados
+output/
+tmp/
+*.pdf
+*.xlsx
+*.xls
+
+# Projetos e materiais sem relacao com este repositorio
+degrees/
+tictactoe/
+lista4_strings/
+*.zip
+
+# Python / notebooks
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
