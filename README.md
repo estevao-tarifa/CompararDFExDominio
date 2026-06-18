@@ -1,4 +1,37 @@
-# Cruzamento Dominio x SAT/DFE
+# Comparar DFE x Dominio
+
+Aplicacao web interna, sem login, para comparar relatorios de Entradas ou Saidas do sistema Dominio com a planilha DFE/SAT SC.
+
+## Stack
+
+- TypeScript + Fastify no servidor web;
+- TypeScript e CSS responsivo na interface;
+- Python apenas no motor de leitura fiscal (PDF, Excel e geracao do relatorio);
+- Docker pronto para deploy pelo EasyPanel.
+
+## Deploy no EasyPanel
+
+1. Crie um novo servico usando este repositorio.
+2. Selecione build por `Dockerfile`.
+3. Configure a porta do servico como `8000`.
+4. Nao e necessario banco de dados nem variaveis de ambiente.
+
+O endpoint de health check e `/health`.
+
+## Desenvolvimento local
+
+```bash
+npm install
+python -m pip install -r requirements.txt
+npm run build
+npm start
+```
+
+Acesse `http://localhost:8000`.
+
+---
+
+## Notebook legado
 
 Projeto para rodar no Google Colab e comparar:
 

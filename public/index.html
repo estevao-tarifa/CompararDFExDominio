@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176ac6"><title>Conferência DFE × Domínio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar"><a class="brand" href="/"><span class="brand-mark">D</span><span>DFE <i>×</i> Domínio</span></a><span class="internal-badge">Ferramenta interna</span></header>
+  <div id="upload-view">
+    <section class="hero">
+      <div class="eyebrow"><span></span> Conferência fiscal simplificada</div>
+      <h1>Compare suas notas em <em>poucos segundos.</em></h1>
+      <p>Envie o relatório do Domínio e a planilha DFE. A ferramenta identifica Entradas ou Saídas e entrega as divergências em um relatório pronto para uso.</p>
+    </section>
+    <section class="upload-card">
+      <div class="alert" id="error-box" role="alert" hidden></div>
+      <form id="compare-form">
+        <div class="upload-grid">
+          <label class="dropzone" for="dominio"><span class="step">01</span><span class="file-icon">↥</span><strong>Relatório do Domínio</strong><small>Entradas ou Saídas</small><span class="file-types">PDF, XLS ou XLSX</span><span class="selected-file" data-for="dominio">Selecionar arquivo</span><input id="dominio" name="dominio" type="file" accept=".pdf,.xls,.xlsx" required></label>
+          <div class="connector"><span>+</span></div>
+          <label class="dropzone" for="dfe"><span class="step">02</span><span class="file-icon">↥</span><strong>Planilha DFE / SAT</strong><small>Exportação das NF-e</small><span class="file-types">XLSX</span><span class="selected-file" data-for="dfe">Selecionar arquivo</span><input id="dfe" name="dfe" type="file" accept=".xlsx" required></label>
+        </div>
+        <div class="form-footer"><p><span>✓</span> Os arquivos são usados somente durante a conferência.</p><button type="submit" class="primary-button"><span class="button-label">Iniciar conferência</span><span class="button-loading">Conferindo arquivos…</span><b>→</b></button></div>
+      </form>
+    </section>
+    <section class="features">
+      <article><span>01</span><div><strong>Detecção automática</strong><p>Reconhece se o relatório é de Entradas ou Saídas.</p></div></article>
+      <article><span>02</span><div><strong>Cruzamento inteligente</strong><p>Compara número, série, valor e emitente ou destinatário.</p></div></article>
+      <article><span>03</span><div><strong>Relatório completo</strong><p>PDF com faltantes, canceladas, diferenças e chaves.</p></div></article>
+    </section>
+  </div>
+  <div id="result-view" hidden>
+    <section class="result-heading"><div class="success-icon">✓</div><div><div class="eyebrow"><span></span><b id="result-movement"></b></div><h1>Conferência <em>finalizada.</em></h1><p><strong id="result-company"></strong> · <span id="result-periods"></span></p></div></section>
+    <section class="result-grid">
+      <article class="metric accent"><small>Total DFE</small><strong id="metric-total">0</strong><span>documentos analisados</span></article>
+      <article class="metric danger"><small>Notas faltantes</small><strong id="metric-missing">0</strong><span id="metric-missing-value">R$ 0,00</span></article>
+      <article class="metric warning"><small>Diferenças</small><strong id="metric-differences">0</strong><span>para conferir</span></article>
+      <article class="metric success"><small>Notas OK</small><strong id="metric-ok">0</strong><span id="metric-compliance">0% de conformidade</span></article>
+    </section>
+    <section class="download-card"><div><span class="pdf-icon">PDF</span><div><strong>Relatório completo da conferência</strong><p id="download-detail"></p></div></div><a class="primary-button" id="download-link" href="#">Baixar relatório <b>↓</b></a></section>
+    <section class="result-note"><strong>Valor das chaves válidas para baixar</strong><span id="valid-value"></span></section>
+    <div class="result-actions"><button id="new-comparison" type="button">← Fazer nova conferência</button></div>
+  </div>
+  <footer>Comparar DFE × Domínio <span>•</span> Uso interno</footer>
+</main>
+<script type="module" src="/app.js"></script>
+</body></html>

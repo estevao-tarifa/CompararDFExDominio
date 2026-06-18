@@ -1,0 +1,13 @@
+.git
+.gitignore
+output
+tmp
+*.pdf
+*.xlsx
+*.xls
+*.zip
+__pycache__
+.ipynb_checkpoints
+node_modules
+dist
+public/app.js

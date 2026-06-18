@@ -15,3 +15,5 @@ lista4_strings/
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+node_modules/
+dist/
