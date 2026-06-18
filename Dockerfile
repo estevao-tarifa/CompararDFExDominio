@@ -7,7 +7,7 @@ COPY public ./public
 RUN npm run build
 
 FROM node:22-slim
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=8000
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=80
 WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends python3 python3-pip libreoffice-calc \
@@ -19,5 +19,5 @@ RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 COPY . .
 COPY --from=web-build /build/dist ./dist
 COPY --from=web-build /build/public/app.js ./public/app.js
-EXPOSE 8000
+EXPOSE 80
 CMD ["node", "dist/server.js"]

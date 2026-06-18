@@ -26,7 +26,7 @@ Aplicacao web interna, sem login, para comparar relatorios de Entradas ou Saidas
 
 1. Crie um novo servico usando este repositorio.
 2. Selecione build por `Dockerfile`.
-3. Configure a porta do servico como `8000`.
+3. Configure a porta do servico como `80`.
 4. Nao e necessario banco de dados nem variaveis de ambiente.
 
 O endpoint de health check e `/health`.
@@ -40,7 +40,7 @@ npm run build
 npm start
 ```
 
-Acesse `http://localhost:8000`.
+Acesse `http://localhost:80` ou defina a variavel `PORT` para outra porta no desenvolvimento local.
 
 ---
 
