@@ -41,6 +41,134 @@ def _load_notebook_engine():
 _load_notebook_engine()
 
 
+def carregar_entradas_pdf(caminho):
+    texto = "\n".join(page.extract_text() or "" for page in PdfReader(caminho).pages)
+    metadados = {
+        "empresa": extrair_empresa_pdf_robusto(texto),
+        "periodo_entradas": extrair_periodo_texto(texto),
+        "periodo_dominio": extrair_periodo_texto(texto),
+        "tipo_movimento": "entrada",
+    }
+    registros = []
+
+    for numero_linha, linha in enumerate(texto.splitlines(), start=1):
+        linha = " ".join(str(linha).split())
+        if not re.search(r"\d{2}/\d{2}/\d{4}", linha):
+            continue
+
+        # Layout normal do relatório: Data, Nota, Série, Espécie ... Valor no fim.
+        normal = re.search(
+            r"^(?P<antes>.*?)(?P<data>\d{2}/\d{2}/\d{4})\s+"
+            r"(?P<nota>\d+)\s+(?P<serie>\d+)\s+(?P<especie>\d+)\s+"
+            r"(?P<resto>.*?)(?P<valor>[\d.]+,\d{2})$",
+            linha,
+        )
+
+        fornecedor = ""
+        if normal:
+            data = normal.group("data")
+            nota = normal.group("nota")
+            serie = normal.group("serie")
+            especie = normal.group("especie")
+            valor = normal.group("valor")
+            detalhe = normal.group("resto")
+            fornecedor_match = re.search(
+                r"(?:0,00\s*){3}(?P<fornecedor>.+?)\s*"
+                r"(?P<uf>[A-Z]{2})(?P<ac>\d{2})(?P<cfop>\d-\d{3})\s*$",
+                detalhe,
+            )
+            if fornecedor_match:
+                fornecedor = fornecedor_match.group("fornecedor").strip()
+        else:
+            # Layout retornado pelo pypdf em alguns relatórios do Domínio:
+            # valores tributários antes da data e fornecedor/CFOP após a espécie.
+            invertido = re.search(
+                r"(?P<data>\d{2}/\d{2}/\d{4})\s+"
+                r"(?P<nota>\d+)\s+(?P<serie>\d+)\s+(?P<especie>\d+)\s+"
+                r"(?P<detalhe>.+?)\s+(?P<valor>[\d.]+,\d{2})\s+ICMS\s*$",
+                linha,
+                flags=re.IGNORECASE,
+            )
+            if not invertido:
+                continue
+            data = invertido.group("data")
+            nota = invertido.group("nota")
+            serie = invertido.group("serie")
+            especie = invertido.group("especie")
+            valor = invertido.group("valor")
+            detalhe = invertido.group("detalhe")
+            fornecedor_match = re.search(
+                r"(?:-?[\d.]+,\d{2}\s*){3}"
+                r"(?P<fornecedor>.+?)(?P<uf>[A-Z]{2})"
+                r"(?P<ac>\d{3})(?P<cfop>\d-\d{3})\s*$",
+                detalhe,
+            )
+            if fornecedor_match:
+                fornecedor = fornecedor_match.group("fornecedor").strip()
+
+        registros.append(
+            {
+                "linha_pdf": numero_linha,
+                "data": data,
+                "nota": nota,
+                "serie": serie,
+                "especie": especie,
+                "fornecedor": fornecedor,
+                "valor_contabil": valor,
+                "linha_original_pdf": linha,
+            }
+        )
+
+    if not registros:
+        raise ValueError(
+            "Nao encontrei linhas de entradas no PDF. Confira se o PDF e o "
+            "relatorio Acompanhamento de Entradas do Dominio."
+        )
+
+    original = pd.DataFrame(registros)
+    original["numero_normalizado"] = original["nota"].map(normalizar_numero_nf)
+    original["serie_normalizada"] = original["serie"].map(normalizar_serie)
+    original["valor_normalizado"] = original["valor_contabil"].map(normalizar_valor)
+    original["data_normalizada"] = pd.to_datetime(
+        original["data"], errors="coerce", format="%d/%m/%Y"
+    )
+
+    # O Domínio pode imprimir uma nota em várias linhas (uma por tributação/CFOP).
+    # O valor contábil da nota é a soma dessas linhas.
+    agrupado = (
+        original.groupby(
+            ["numero_normalizado", "serie_normalizada", "data_normalizada"],
+            dropna=False,
+            as_index=False,
+        )
+        .agg(
+            dominio_valor=("valor_normalizado", "sum"),
+            dominio_fornecedor=(
+                "fornecedor",
+                lambda values: next((v for v in values if str(v).strip()), ""),
+            ),
+            dominio_linha_pdf=("linha_pdf", "min"),
+        )
+    )
+    movimento = pd.DataFrame(
+        {
+            "dominio_numero": agrupado["numero_normalizado"],
+            "dominio_serie": agrupado["serie_normalizada"],
+            "dominio_valor": agrupado["dominio_valor"].round(2),
+            "dominio_fornecedor": agrupado["dominio_fornecedor"],
+            "dominio_data": agrupado["data_normalizada"],
+            "dominio_aba_origem": "PDF - Entradas",
+            "dominio_linha_pdf": agrupado["dominio_linha_pdf"],
+        }
+    )
+    movimento = movimento[
+        (movimento["dominio_numero"] != "") & (movimento["dominio_serie"] != "")
+    ].copy()
+    movimento.attrs.update(metadados)
+    original.attrs.update(metadados)
+    return movimento, original
+
+
 def _money(value):
     return f"R$ {float(value):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
